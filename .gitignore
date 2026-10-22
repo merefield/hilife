@@ -1,0 +1,8 @@
+.tools/
+bin/
+web/node_modules/
+web/.svelte-kit/
+web/test-results/
+internal/webui/dist/*
+!internal/webui/dist/.gitkeep
+*.log

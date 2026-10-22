@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")"
+if [[ -x bin/hilife ]]; then exec bin/hilife "$@"; fi
+task_go=go
+if [[ -x .tools/go/bin/go ]]; then task_go=.tools/go/bin/go; fi
+exec "$task_go" run . "$@"
