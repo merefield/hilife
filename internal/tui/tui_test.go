@@ -4,10 +4,31 @@ import (
 	"strings"
 	"testing"
 
+	tea "charm.land/bubbletea/v2"
 	"github.com/charmbracelet/x/ansi"
 	"hilife/internal/app"
 	"hilife/internal/life"
 )
+
+func TestRawOutputDoesNotScheduleMoreGraphics(t *testing.T) {
+	for _, backend := range []string{"auto", "braille"} {
+		t.Run(backend, func(t *testing.T) {
+			s, err := app.New(1)
+			if err != nil {
+				t.Fatal(err)
+			}
+			m := New(s, backend)
+			m.kitty = true
+			m.width, m.height = 12, 8
+			// Bubble Tea writes RawMsg before forwarding it to Update. A new
+			// image (or deletion in Braille mode) here starts an output loop.
+			_, cmd := m.Update(tea.RawMsg{Msg: "already written"})
+			if cmd != nil {
+				t.Fatal("raw output scheduled another graphics command")
+			}
+		})
+	}
+}
 
 func TestBrailleViewUsesAllTerminalRows(t *testing.T) {
 	for _, size := range [][2]int{{80, 24}, {120, 32}} {

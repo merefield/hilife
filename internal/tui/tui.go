@@ -110,6 +110,10 @@ func (m *Model) action(a app.Action) {
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
+	case tea.RawMsg:
+		// Bubble Tea has already written this output. Redrawing in response
+		// would turn every Kitty frame (or deletion) into an endless loop.
+		return m, nil
 	case tea.WindowSizeMsg:
 		m.width, m.height = msg.Width, msg.Height
 		m.input.SetWidth(max(10, msg.Width-8))
